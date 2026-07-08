@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # Vector Database with pgvector
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: vector_db
+    environment:
+      POSTGRES_USER: agent_user
+      POSTGRES_PASSWORD: agent_password
+      POSTGRES_DB: agent_memory
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agent_user -d agent_memory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agent_network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+
+  # Local LLM for Embeddings & Chat
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./data/ollama:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_NUM_PARALLEL=4
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+    networks:
+      - agent_network
+
+  # Our AI Agent Backend
+  agent_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent_api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://agent_user:agent_password@postgres:5432/agent_memory
+      - OLLAMA_URL=http://ollama:11434
+      - LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      - agent_network
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus:/prometheus
+    networks:
+      - agent_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    networks:
+      - agent_network
+
+networks:
+  agent_network:
+    driver: bridge
