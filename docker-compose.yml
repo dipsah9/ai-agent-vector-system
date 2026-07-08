@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Vector Database with pgvector
   postgres:
@@ -80,7 +78,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus:/etc/prometheus
       - ./data/prometheus:/prometheus
     networks:
       - agent_network

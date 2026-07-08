@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import logging
-from contextlib import asynccontextmanager
 
 from .api.routes import router
 from .core.vector_store import VectorStore
@@ -22,51 +20,13 @@ embedder = None
 document_processor = None
 agent_service = None
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifecycle manager"""
-    global vector_store, embedder, document_processor, agent_service
-    
-    # Startup
-    logger.info("Initializing AI Agent Vector System...")
-    
-    # Initialize core services
-    vector_store = VectorStore(settings.database_url)
-    embedder = EmbeddingService(settings.ollama_url, settings.embedding_model)
-    
-    # Initialize business services
-    document_processor = DocumentProcessor(vector_store, embedder)
-    agent_service = AgentService(
-        vector_store=vector_store,
-        embedder=embedder,
-        llm_url=settings.ollama_url,
-        llm_model=settings.llm_model
-    )
-    
-    # Inject services into routes
-    from .api.routes import document_processor as dp, agent_service as ag
-    dp = document_processor
-    ag = agent_service
-    
-    logger.info("All services initialized successfully")
-    yield
-    
-    # Shutdown
-    logger.info("Shutting down AI Agent Vector System...")
-
 # Create FastAPI app
 app = FastAPI(
     title=settings.app_name,
-    version="1.0.0",
-    lifespan=lifespan
+    version="1.0.0"
 )
 
-# Security middleware
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"]  # Configure for production
-)
-
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -75,13 +35,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routes
-app.include_router(router, prefix="/api/v1")
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    global vector_store, embedder, document_processor, agent_service
+    
+    logger.info("Initializing AI Agent Vector System...")
+    
+    try:
+        # Initialize core services
+        vector_store = VectorStore(settings.database_url)
+        embedder = EmbeddingService(settings.ollama_url, settings.embedding_model)
+        
+        # Initialize business services
+        document_processor = DocumentProcessor(vector_store, embedder)
+        agent_service = AgentService(
+            vector_store=vector_store,
+            embedder=embedder,
+            llm_url=settings.ollama_url,
+            llm_model=settings.llm_model
+        )
+        
+        # Inject services into routes
+        from .api import routes
+        routes.document_processor = document_processor
+        routes.agent_service = agent_service
+        
+        logger.info("All services initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize services: {e}")
+        raise
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("Shutting down AI Agent Vector System...")
 
 @app.get("/")
 async def root():
     return {"message": f"Welcome to {settings.app_name}", "status": "running"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+@app.get("/health")
+async def health():
+    return {"status": "healthy", "service": settings.app_name}
+
+# Include routes
+app.include_router(router, prefix="/api/v1")

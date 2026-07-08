@@ -16,8 +16,8 @@ class DocumentEmbedding(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     document_id = Column(String(255), nullable=False, index=True)
     chunk_text = Column(Text, nullable=False)
-    embedding = Column(Vector(768))  # Dimension matches your embedding model
-    metadata = Column(Text)  # JSON string for extra metadata
+    embedding = Column(Vector(768))
+    meta_data = Column(Text)  # Changed from 'metadata' to 'meta_data'
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
@@ -37,20 +37,16 @@ class VectorStore:
         self._create_indexes()
     
     def _create_tables(self):
-        """Initialize database schema"""
         Base.metadata.create_all(self.engine)
         logger.info("Vector database tables created")
     
     def _create_indexes(self):
-        """Create indexes for fast similarity search"""
         with self.engine.connect() as conn:
-            # HNSW index for fast approximate nearest neighbor search
             conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_embedding_hnsw 
                 ON document_embeddings 
                 USING hnsw (embedding vector_cosine_ops)
             """)
-            # Standard index for metadata filtering
             conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_document_id 
                 ON document_embeddings (document_id)
@@ -60,7 +56,6 @@ class VectorStore:
     
     def insert(self, document_id: str, chunks: List[str], 
                embeddings: List[List[float]], metadata: List[Dict[str, Any]] = None):
-        """Insert document chunks with their embeddings"""
         if metadata is None:
             metadata = [{}] * len(chunks)
         
@@ -71,7 +66,7 @@ class VectorStore:
                     document_id=document_id,
                     chunk_text=chunk,
                     embedding=embedding,
-                    metadata=json.dumps(meta)
+                    meta_data=json.dumps(meta)  # Changed to meta_data
                 )
                 session.add(doc)
             
@@ -88,22 +83,19 @@ class VectorStore:
                top_k: int = 5, 
                filter_metadata: Optional[Dict[str, Any]] = None,
                similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
-        """Search for similar documents using cosine similarity"""
         
-        # Build the query with optional metadata filtering
         query = """
             SELECT 
                 chunk_text,
                 1 - (embedding <=> %s::vector) as similarity,
-                metadata
+                meta_data
             FROM document_embeddings
         """
         
         params = [query_embedding]
         
         if filter_metadata:
-            # PostgreSQL JSONB filtering for production use
-            query += " WHERE metadata::jsonb @> %s::jsonb"
+            query += " WHERE meta_data::jsonb @> %s::jsonb"
             params.append(json.dumps(filter_metadata))
         
         query += f" ORDER BY embedding <=> %s::vector LIMIT {top_k}"
@@ -118,7 +110,7 @@ class VectorStore:
                     results.append({
                         'text': row.chunk_text,
                         'similarity': float(row.similarity),
-                        'metadata': json.loads(row.metadata) if row.metadata else {}
+                        'metadata': json.loads(row.meta_data) if row.meta_data else {}
                     })
             
             logger.info(f"Found {len(results)} relevant chunks")
@@ -130,7 +122,6 @@ class VectorStore:
             session.close()
     
     def delete_document(self, document_id: str):
-        """Delete all embeddings for a specific document"""
         session = self.Session()
         try:
             session.query(DocumentEmbedding).filter(
@@ -146,7 +137,6 @@ class VectorStore:
             session.close()
     
     def get_statistics(self) -> Dict[str, Any]:
-        """Get database statistics for monitoring"""
         session = self.Session()
         try:
             total_docs = session.query(func.count(

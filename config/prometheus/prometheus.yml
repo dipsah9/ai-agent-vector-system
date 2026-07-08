@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'ai-agent-api'
+    static_configs:
+      - targets: ['agent_api:8000']
+  
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres:9187']

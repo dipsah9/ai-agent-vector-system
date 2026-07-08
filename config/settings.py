@@ -4,17 +4,17 @@ import os
 
 class Settings(BaseSettings):
     # Database
-    database_url: str = "postgresql://agent_user:agent_password@localhost:5432/agent_memory"
+    database_url: str = "postgresql://agent_user:agent_password@postgres:5432/agent_memory"
     
     # LLM
-    ollama_url: str = "http://localhost:11434"
+    ollama_url: str = "http://ollama:11434"
     embedding_model: str = "nomic-embed-text"
-    llm_model: str = "llama3.2"
+    llm_model: str = "llama3.2:1b"
     
     # Application
     app_name: str = "AI Agent Vector System"
     log_level: str = "INFO"
-    max_document_size: int = 10 * 1024 * 1024  # 10MB
+    max_document_size: int = 10 * 1024 * 1024
     
     # Vector Search
     default_top_k: int = 5

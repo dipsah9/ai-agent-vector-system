@@ -1,11 +1,10 @@
 import logging
 import requests
 from typing import List, Dict, Any, Optional
+
 from ..core.vector_store import VectorStore
 from ..core.embedder import EmbeddingService
 from ..models.schemas import AgentResponse, Source
-import json
-import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +12,7 @@ class AgentService:
     """The main AI Agent service with reasoning capabilities"""
     
     def __init__(self, vector_store: VectorStore, embedder: EmbeddingService, 
-                 llm_url: str, llm_model: str = "llama3.2"):
+                 llm_url: str, llm_model: str = "llama3.2:1b"):
         self.vector_store = vector_store
         self.embedder = embedder
         self.llm_url = llm_url
@@ -51,21 +50,21 @@ class AgentService:
             for i, r in enumerate(search_results)
         ])
         
-        # Step 3: Construct the prompt with reasoning instructions
+        # Step 3: Construct the prompt
         prompt = f"""You are a knowledgeable AI assistant with access to a document database.
         
-        CONTEXT FROM DOCUMENTS:
-        {context}
-        
-        QUESTION: {query}
-        
-        INSTRUCTIONS:
-        1. Answer the question using ONLY the provided context
-        2. If the context doesn't contain the answer, say "I don't have enough information"
-        3. Cite your sources by mentioning [Source X] in your answer
-        4. Be concise and specific
-        
-        ANSWER:"""
+CONTEXT FROM DOCUMENTS:
+{context}
+
+QUESTION: {query}
+
+INSTRUCTIONS:
+1. Answer the question using ONLY the provided context
+2. If the context doesn't contain the answer, say "I don't have enough information"
+3. Cite your sources by mentioning [Source X] in your answer
+4. Be concise and specific
+
+ANSWER:"""
         
         # Step 4: Get response from LLM
         try:
@@ -96,7 +95,7 @@ class AgentService:
                             similarity=r['similarity'],
                             metadata=r.get('metadata', {})
                         )
-                        for r in search_results[:3]  # Top 3 sources
+                        for r in search_results[:3]
                     ],
                     confidence=round(confidence, 3)
                 )
