@@ -1,0 +1,66 @@
+2026-07-08 22:25:06,172 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-08 22:25:06,198 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) could not translate host name "postgres" to address: Temporary failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-08 22:31:27,558 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-08 22:31:27,565 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) could not translate host name "postgres" to address: Temporary failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-08 23:36:09,775 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-08 23:36:10,310 - src.core.vector_store - INFO - Vector database tables created
+2026-07-08 23:36:10,311 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-08 23:38:22,352 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-08 23:38:22,385 - src.core.vector_store - INFO - Vector database tables created
+2026-07-08 23:38:22,385 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 06:50:55,486 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 06:50:55,552 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 06:50:55,553 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 16:57:18,957 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 16:57:19,082 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 16:57:19,084 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 17:00:23,939 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 17:00:23,999 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 17:00:24,000 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 17:02:04,852 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 17:02:04,922 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 17:02:04,922 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 17:02:31,560 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 17:02:31,608 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 17:02:31,609 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 17:04:42,185 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 17:04:42,235 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 17:04:42,236 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 17:05:45,235 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 17:05:45,279 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 17:05:45,280 - src.main - ERROR - Failed to initialize services: Not an executable object: '\n                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw \n                ON document_embeddings \n                USING hnsw (embedding vector_cosine_ops)\n            '
+2026-07-09 19:51:07,485 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 19:51:11,366 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) could not translate host name "host.docker.internal" to address: nodename nor servname provided, or not known
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-09 20:09:47,723 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 20:09:49,775 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) could not translate host name "host.docker.internal" to address: nodename nor servname provided, or not known
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-09 20:13:32,846 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 20:13:32,897 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-09 20:17:14,060 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-09 20:17:15,195 - src.core.vector_store - INFO - Vector database tables created
+2026-07-09 20:17:15,206 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-09 20:17:15,224 - src.core.embedder - WARNING - Model nomic-embed-text not found, pulling...
+2026-07-09 20:17:15,230 - src.core.embedder - INFO - Successfully pulled model nomic-embed-text
+2026-07-09 20:17:15,231 - src.main - INFO - All services initialized successfully
+2026-07-09 20:18:28,831 - src.services.document_processor - INFO - Processing document: test_doc_1
+2026-07-09 20:18:28,878 - src.core.embedder - ERROR - Embedding API error: {"error":"model \"nomic-embed-text\" not found, try pulling it first"}
+2026-07-09 20:18:28,905 - src.core.vector_store - ERROR - Failed to insert embeddings: (psycopg2.errors.UndefinedColumn) column "meta_data" of relation "document_embeddings" does not exist
+LINE 1: ...t_embeddings (document_id, chunk_text, embedding, meta_data,...
+                                                             ^
+
+[SQL: INSERT INTO document_embeddings (document_id, chunk_text, embedding, meta_data, updated_at) VALUES (%(document_id)s, %(chunk_text)s, %(embedding)s, %(meta_data)s, %(updated_at)s) RETURNING document_embeddings.id, document_embeddings.created_at]
+[parameters: {'document_id': 'test_doc_1', 'chunk_text': 'AI agents are autonomous systems that perceive, reason, and act to achieve goals. They use large language models as their brain, with memory and tools to interact with the world.', 'embedding': '[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0, ... (2775 characters truncated) ... ,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]', 'meta_data': '{"filename": "test.txt", "source": "upload", "chunk_index": 0, "total_chunks": 1, "processed_at": "2026-07-09T18:18:28.887670"}', 'updated_at': None}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-07-09 20:19:44,386 - src.main - INFO - Shutting down AI Agent Vector System...

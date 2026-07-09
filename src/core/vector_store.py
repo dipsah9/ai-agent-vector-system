@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
-from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, func
+from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, func, text  # ← ADD text HERE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
@@ -17,13 +17,11 @@ class DocumentEmbedding(Base):
     document_id = Column(String(255), nullable=False, index=True)
     chunk_text = Column(Text, nullable=False)
     embedding = Column(Vector(768))
-    meta_data = Column(Text)  # Changed from 'metadata' to 'meta_data'
+    meta_data = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
 class VectorStore:
-    """Production-grade vector database interface"""
-    
     def __init__(self, database_url: str):
         self.engine = create_engine(
             database_url,
@@ -42,15 +40,16 @@ class VectorStore:
     
     def _create_indexes(self):
         with self.engine.connect() as conn:
-            conn.execute("""
+            # FIX: Use text() for raw SQL
+            conn.execute(text("""
                 CREATE INDEX IF NOT EXISTS idx_embedding_hnsw 
                 ON document_embeddings 
                 USING hnsw (embedding vector_cosine_ops)
-            """)
-            conn.execute("""
+            """))
+            conn.execute(text("""
                 CREATE INDEX IF NOT EXISTS idx_document_id 
                 ON document_embeddings (document_id)
-            """)
+            """))
             conn.commit()
         logger.info("Vector database indexes created")
     
@@ -66,7 +65,7 @@ class VectorStore:
                     document_id=document_id,
                     chunk_text=chunk,
                     embedding=embedding,
-                    meta_data=json.dumps(meta)  # Changed to meta_data
+                    meta_data=json.dumps(meta)
                 )
                 session.add(doc)
             
@@ -103,7 +102,8 @@ class VectorStore:
         
         session = self.Session()
         try:
-            result = session.execute(query, params)
+            # FIX: Use text() for raw SQL
+            result = session.execute(text(query), params)
             results = []
             for row in result:
                 if row.similarity >= similarity_threshold:

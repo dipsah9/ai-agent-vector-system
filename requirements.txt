@@ -18,3 +18,4 @@ sentence-transformers==2.2.2
 prometheus-client==0.19.0
 loguru==0.7.2
 tenacity==8.2.3
+pgvector

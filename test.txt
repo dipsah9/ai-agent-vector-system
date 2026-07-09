@@ -1,0 +1,1 @@
+AI agents are autonomous systems that perceive, reason, and act to achieve goals. They use large language models as their brain, with memory and tools to interact with the world.
