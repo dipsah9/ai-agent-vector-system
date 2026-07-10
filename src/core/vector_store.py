@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
-from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, func, text  # ← ADD text HERE
+from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, func, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
@@ -40,7 +40,6 @@ class VectorStore:
     
     def _create_indexes(self):
         with self.engine.connect() as conn:
-            # FIX: Use text() for raw SQL
             conn.execute(text("""
                 CREATE INDEX IF NOT EXISTS idx_embedding_hnsw 
                 ON document_embeddings 
@@ -77,33 +76,33 @@ class VectorStore:
             raise
         finally:
             session.close()
-    
-    def search(self, query_embedding: List[float], 
-               top_k: int = 5, 
-               filter_metadata: Optional[Dict[str, Any]] = None,
-               similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
         
-        query = """
+    def search(self, query_embedding: List[float], 
+            top_k: int = 5, 
+            filter_metadata: Optional[Dict[str, Any]] = None,
+            similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
+        
+        # Build query - explicitly cast the parameter to vector
+        sql = """
             SELECT 
                 chunk_text,
-                1 - (embedding <=> %s::vector) as similarity,
+                1 - (embedding <=> CAST(:emb AS vector)) as similarity,
                 meta_data
             FROM document_embeddings
         """
         
-        params = [query_embedding]
+        # Parameters as dictionary - pgvector handles the list
+        params = {'emb': query_embedding}
         
         if filter_metadata:
-            query += " WHERE meta_data::jsonb @> %s::jsonb"
-            params.append(json.dumps(filter_metadata))
+            sql += " WHERE meta_data::jsonb @> :filter"
+            params['filter'] = json.dumps(filter_metadata)
         
-        query += f" ORDER BY embedding <=> %s::vector LIMIT {top_k}"
-        params.append(query_embedding)
+        sql += f" ORDER BY embedding <=> CAST(:emb AS vector) LIMIT {top_k}"
         
         session = self.Session()
         try:
-            # FIX: Use text() for raw SQL
-            result = session.execute(text(query), params)
+            result = session.execute(text(sql), params)
             results = []
             for row in result:
                 if row.similarity >= similarity_threshold:
