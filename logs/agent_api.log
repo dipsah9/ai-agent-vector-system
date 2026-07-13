@@ -165,3 +165,31 @@ HINT:  No operator matches the given name and argument types. You might need to 
 2026-07-10 07:53:21,349 - src.services.agent_service - ERROR - LLM API error: {"error":"model 'llama3.2:1b' not found"}
 2026-07-10 07:58:37,130 - src.core.vector_store - INFO - Found 1 relevant chunks
 2026-07-10 08:38:48,455 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 05:47:39,549 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 05:47:39,632 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 05:47:39,642 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 05:47:39,688 - src.main - INFO - All services initialized successfully
+2026-07-13 05:48:34,089 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 05:49:44,922 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 05:51:23,654 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 05:51:49,545 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 05:51:49,583 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 05:51:49,590 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 05:51:49,631 - src.main - INFO - All services initialized successfully
+2026-07-13 05:53:22,683 - src.services.document_processor - INFO - Processing document: test.txt
+2026-07-13 05:53:24,258 - src.core.vector_store - INFO - Inserted 1 embeddings for document test.txt
+2026-07-13 05:53:24,259 - src.services.document_processor - INFO - Document processed: test.txt with 1 chunks
+2026-07-13 05:53:42,265 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 05:55:12,447 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 05:57:48,990 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 05:57:49,028 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 05:57:49,033 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 05:57:49,080 - src.main - INFO - All services initialized successfully
+2026-07-13 05:58:10,175 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 05:58:52,315 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 05:59:10,267 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 05:59:10,320 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 05:59:10,328 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 05:59:10,369 - src.main - INFO - All services initialized successfully
+2026-07-13 05:59:21,500 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 05:59:39,263 - src.main - INFO - Shutting down AI Agent Vector System...
