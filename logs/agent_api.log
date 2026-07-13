@@ -164,3 +164,4 @@ HINT:  No operator matches the given name and argument types. You might need to 
 2026-07-10 07:53:21,341 - src.core.vector_store - INFO - Found 1 relevant chunks
 2026-07-10 07:53:21,349 - src.services.agent_service - ERROR - LLM API error: {"error":"model 'llama3.2:1b' not found"}
 2026-07-10 07:58:37,130 - src.core.vector_store - INFO - Found 1 relevant chunks
+2026-07-10 08:38:48,455 - src.main - INFO - Shutting down AI Agent Vector System...
