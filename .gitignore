@@ -1,4 +1,7 @@
 .venv
 .env
 
-data/ollama/
+data/ollama/.env
+data/
+*.db
+*.sqlite3

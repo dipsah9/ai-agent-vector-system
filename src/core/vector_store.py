@@ -76,33 +76,32 @@ class VectorStore:
             raise
         finally:
             session.close()
-    
-    def search(self, query_embedding: List[float], 
-               top_k: int = 5, 
-               filter_metadata: Optional[Dict[str, Any]] = None,
-               similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
         
-        # Build the query with named parameters
+    def search(self, query_embedding: List[float], 
+            top_k: int = 5, 
+            filter_metadata: Optional[Dict[str, Any]] = None,
+            similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
+        
+        # Build query - explicitly cast the parameter to vector
         sql = """
             SELECT 
                 chunk_text,
-                1 - (embedding <=> :emb) as similarity,
+                1 - (embedding <=> CAST(:emb AS vector)) as similarity,
                 meta_data
             FROM document_embeddings
         """
         
-        # Parameters as a dictionary
+        # Parameters as dictionary - pgvector handles the list
         params = {'emb': query_embedding}
         
         if filter_metadata:
             sql += " WHERE meta_data::jsonb @> :filter"
             params['filter'] = json.dumps(filter_metadata)
         
-        sql += f" ORDER BY embedding <=> :emb LIMIT {top_k}"
+        sql += f" ORDER BY embedding <=> CAST(:emb AS vector) LIMIT {top_k}"
         
         session = self.Session()
         try:
-            # Execute with dictionary parameters
             result = session.execute(text(sql), params)
             results = []
             for row in result:

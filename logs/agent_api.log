@@ -193,3 +193,58 @@ HINT:  No operator matches the given name and argument types. You might need to 
 2026-07-13 05:59:10,369 - src.main - INFO - All services initialized successfully
 2026-07-13 05:59:21,500 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
 2026-07-13 05:59:39,263 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:21:57,427 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:22:00,943 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 08:22:00,955 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 08:22:01,027 - src.main - INFO - All services initialized successfully
+2026-07-13 06:22:06,997 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 06:22:07,024 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 06:22:07,029 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 06:22:07,039 - src.main - INFO - All services initialized successfully
+2026-07-13 06:22:23,318 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 06:24:05,718 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:24:13,301 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:24:20,364 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:24:20,406 - src.main - ERROR - Failed to initialize services: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-07-13 08:24:38,618 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:24:38,959 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 08:24:38,968 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 08:24:39,035 - src.main - INFO - All services initialized successfully
+2026-07-13 08:25:08,177 - src.core.vector_store - ERROR - Search failed: List argument must consist only of tuples or dictionaries
+2026-07-13 08:25:32,081 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:26:03,108 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:26:03,421 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 08:26:03,427 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 08:26:03,447 - src.main - INFO - All services initialized successfully
+2026-07-13 08:26:25,661 - src.core.vector_store - INFO - Found 0 relevant chunks
+2026-07-13 08:27:14,039 - src.core.vector_store - INFO - Found 0 relevant chunks
+2026-07-13 08:27:31,697 - src.core.vector_store - INFO - Found 0 relevant chunks
+2026-07-13 08:27:35,486 - src.core.vector_store - INFO - Found 0 relevant chunks
+2026-07-13 08:29:00,120 - src.services.document_processor - INFO - Processing document: test_doc_1
+2026-07-13 08:29:00,426 - src.core.vector_store - INFO - Inserted 1 embeddings for document test_doc_1
+2026-07-13 08:29:00,426 - src.services.document_processor - INFO - Document processed: test_doc_1 with 1 chunks
+2026-07-13 08:29:15,430 - src.core.vector_store - INFO - Found 0 relevant chunks
+2026-07-13 08:29:35,979 - src.core.vector_store - INFO - Found 3 relevant chunks
+2026-07-13 08:30:06,011 - src.services.agent_service - ERROR - LLM request failed: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=30)
+2026-07-13 08:30:27,700 - src.core.vector_store - INFO - Found 3 relevant chunks
+2026-07-13 08:32:07,543 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:32:08,974 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:32:09,270 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 08:32:09,282 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 08:32:09,306 - src.main - INFO - All services initialized successfully
+2026-07-13 08:32:22,722 - src.core.vector_store - INFO - Found 3 relevant chunks
+2026-07-13 08:35:36,614 - src.main - INFO - Shutting down AI Agent Vector System...
+2026-07-13 08:35:43,472 - src.main - INFO - Initializing AI Agent Vector System...
+2026-07-13 08:35:43,665 - src.core.vector_store - INFO - Vector database tables created
+2026-07-13 08:35:43,671 - src.core.vector_store - INFO - Vector database indexes created
+2026-07-13 08:35:43,693 - src.main - INFO - All services initialized successfully
+2026-07-13 08:41:05,934 - src.services.document_processor - INFO - Processing document: germany_tech_market
+2026-07-13 08:41:06,978 - src.core.vector_store - INFO - Inserted 1 embeddings for document germany_tech_market
+2026-07-13 08:41:06,978 - src.services.document_processor - INFO - Document processed: germany_tech_market with 1 chunks
+2026-07-13 08:41:40,206 - src.core.vector_store - INFO - Found 1 relevant chunks
+2026-07-13 23:44:53,586 - src.main - INFO - Shutting down AI Agent Vector System...
