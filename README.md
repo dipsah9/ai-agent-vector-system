@@ -30,20 +30,20 @@ This system enables your AI agent to:
 ---
 
 flowchart LR
-    User[👤 User] --> API[⚡ FastAPI]
+    User[User] --> API[FastAPI]
     
-    subgraph Core["🧠 AI Agent System"]
-        API --> Agent[🤖 AI Agent Core]
-        Agent --> DB[(🗄️ PostgreSQL<br/>+ pgvector)]
-        Agent --> Ollama[🦙 Ollama]
+    subgraph Core["AI Agent System"]
+        API --> Agent[AI Agent Core]
+        Agent --> DB[(PostgreSQL<br/>+ pgvector)]
+        Agent --> Ollama[Ollama]
     end
     
-    subgraph Models["🎯 LLM Models"]
-        Ollama --> Embed[📊 nomic-embed-text]
-        Ollama --> Chat[💬 llama3.2:1b]
+    subgraph Models["LLM Models"]
+        Ollama --> Embed[nomic-embed-text]
+        Ollama --> Chat[llama3.2:1b]
     end
     
-    subgraph Monitor["📈 Observability"]
+    subgraph Monitor["Observability"]
         Prom[Prometheus] --> Graf[Grafana]
         API -.-> Prom
         Agent -.-> Prom
