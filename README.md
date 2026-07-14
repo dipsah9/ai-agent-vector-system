@@ -4,6 +4,18 @@ A production-ready Retrieval-Augmented Generation (RAG) system for building AI a
 
 ---
 
+## 📚 Table of Contents
+- [Overview](#-overview)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [API Endpoints](#-api-endpoints)
+- [Monitoring](#-monitoring)
+- [Use Cases](#-example-use-cases)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 ## 📋 Overview
 
 This system enables your AI agent to:
@@ -19,29 +31,26 @@ This system enables your AI agent to:
 
 ## 🏗️ Architecture
 
-┌─────────────────────────────────────────────────────────────┐
-│                     AI Agent System                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────┐      ┌─────────────────┐                  │
-│  │   FastAPI    │─────▶│   PostgreSQL    │                  │
-│  │   (Backend)  │      │   + pgvector    │                  │
-│  └──────────────┘      └─────────────────┘                  │
-│         │                       │                           │
-│         │                       │                           │
-│  ┌──────▼──────────────────────▼──────┐                     │
-│  │         Ollama (Local LLM)          │                    │
-│  │   - Embedding: nomic-embed-text     │                    │
-│  │   - Chat: llama3.2:1b               │                    │
-│  └─────────────────────────────────────┘                    │
-│                                                             │
-│  ┌─────────────────────────────────────┐                    │
-│  │    Prometheus + Grafana             │                    │
-│  │    (Monitoring)                     │                    │
-│  └─────────────────────────────────────┘                    │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-
+```mermaid
+flowchart TB
+    User[User] --> API[FastAPI Gateway]
+    
+    subgraph System["AI Agent System"]
+        API --> Agent[AI Agent Service]
+        Agent --> Vector[PostgreSQL + pgvector]
+        Agent --> Ollama[Ollama Local LLM]
+        
+        Ollama --> Embed[nomic-embed-text]
+        Ollama --> Chat[llama3.2:1b]
+        
+        Monitor[Prometheus + Grafana] -.-> API
+        Monitor -.-> Agent
+        Monitor -.-> Vector
+        Monitor -.-> Ollama
+    end
+    
+    Vector --> Storage[(Persistent Storage)]
+    Ollama --> Models[Local Models Cache]
 
 ---
 
