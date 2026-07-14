@@ -34,7 +34,7 @@ flowchart LR
     
     subgraph Core["AI Agent System"]
         API --> Agent[AI Agent Core]
-        Agent --> DB[(PostgreSQL<br/>+ pgvector)]
+        Agent --> DB[("PostgreSQL + pgvector")]
         Agent --> Ollama[Ollama]
     end
     
