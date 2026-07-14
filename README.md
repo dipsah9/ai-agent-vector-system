@@ -1,216 +1,372 @@
 # 🚀 AI Agent Vector System
 
-A production-ready Retrieval-Augmented Generation (RAG) system for building AI agents with long-term memory using PostgreSQL + pgvector and local LLMs.
+> A production-ready Retrieval-Augmented Generation (RAG) framework that gives AI agents long-term memory using **PostgreSQL + pgvector**, **Ollama**, and **FastAPI**.
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-## 📚 Table of Contents
-- [Overview](#-overview)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [API Endpoints](#-api-endpoints)
-- [Monitoring](#-monitoring)
-- [Use Cases](#-example-use-cases)
-- [Contributing](#-contributing)
-- [License](#-license)
+# 📖 Overview
 
-## 📋 Overview
+AI Agent Vector System is a complete **Retrieval-Augmented Generation (RAG)** backend that enables AI assistants to remember information, retrieve relevant context, and answer questions using local Large Language Models.
 
-This system enables your AI agent to:
-- **Ingest** documents (text files, PDFs, websites)
-- **Remember** information using a vector database
-- **Retrieve** relevant context when answering questions
-- **Reason** using local LLMs (no API costs)
-- **Scale** from prototype to production
+Instead of sending data to cloud APIs, the entire pipeline runs locally using **Ollama**, making it fast, private, and cost-effective.
 
-**Status:** ✅ Fully Operational
+The project is designed for both rapid prototyping and production deployments.
 
 ---
 
+# ✨ Features
+
+- 📄 Document Ingestion (TXT, PDF, Web Pages)
+- 🧠 Long-Term Memory using pgvector
+- 🔍 Semantic Search
+- 🤖 Local LLMs with Ollama
+- ⚡ FastAPI REST API
+- 🐳 Docker Compose Deployment
+- 📈 Prometheus Metrics
+- 📊 Grafana Dashboards
+- 🔒 Fully Offline (No API Costs)
+- 🚀 Production Ready Architecture
+
+---
+
+# 🏗️ System Architecture
+
+```mermaid
 flowchart LR
-    User[User] --> API[FastAPI]
-    
-    subgraph Core["AI Agent System"]
-        API --> Agent[AI Agent Core]
-        Agent --> DB[("PostgreSQL + pgvector")]
-        Agent --> Ollama[Ollama]
-    end
-    
-    subgraph Models["LLM Models"]
-        Ollama --> Embed[nomic-embed-text]
-        Ollama --> Chat[llama3.2:1b]
-    end
-    
-    subgraph Monitor["Observability"]
-        Prom[Prometheus] --> Graf[Grafana]
-        API -.-> Prom
-        Agent -.-> Prom
-        DB -.-> Prom
-        Ollama -.-> Prom
-    end
 
-## 🛠️ Tech Stack
+    U[👤 User]
 
-| Component | Technology | Version |
-| :--- | :--- | :--- |
-| **API Framework** | FastAPI | 0.104.1 |
-| **Server** | Uvicorn | 0.24.0 |
-| **Database** | PostgreSQL + pgvector | 16 |
-| **ORM** | SQLAlchemy | 2.0.23 |
-| **LLM Runtime** | Ollama | Latest |
-| **Embedding Model** | nomic-embed-text | 768 dims |
-| **Chat Model** | llama3.2:1b | 1B params |
-| **Containerization** | Docker Compose | 3.8 |
-| **Monitoring** | Prometheus + Grafana | Latest |
+    API[FastAPI API]
+
+    AGENT[AI Agent]
+
+    DB[(PostgreSQL<br/>pgvector)]
+
+    OLLAMA[Ollama]
+
+    EMBED[nomic-embed-text]
+
+    CHAT[llama3.2:1b]
+
+    PROM[Prometheus]
+
+    GRAF[Grafana]
+
+    U --> API
+
+    API --> AGENT
+
+    AGENT --> DB
+
+    AGENT --> OLLAMA
+
+    OLLAMA --> EMBED
+
+    OLLAMA --> CHAT
+
+    API --> PROM
+    AGENT --> PROM
+    DB --> PROM
+    OLLAMA --> PROM
+
+    PROM --> GRAF
+```
 
 ---
 
-## 🚀 Quick Start
+# ⚙️ Technology Stack
 
-### Prerequisites
+| Layer | Technology |
+|--------|------------|
+| API | FastAPI |
+| Server | Uvicorn |
+| Database | PostgreSQL 16 |
+| Vector Database | pgvector |
+| ORM | SQLAlchemy 2.x |
+| LLM Runtime | Ollama |
+| Embedding Model | nomic-embed-text |
+| Chat Model | llama3.2:1b |
+| Monitoring | Prometheus |
+| Dashboard | Grafana |
+| Containers | Docker Compose |
 
-- **Docker** and **Docker Compose** installed
-- At least **8GB RAM** (16GB recommended)
-- **10GB free disk space**
-- **Git**
+---
 
-### One-Command Setup
+# 📁 Project Structure
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ai-agent-vector-system.git
-cd ai-agent-vector-system
-
-# Make setup script executable
-chmod +x scripts/setup.sh
-
-# Run the setup (this will pull models and start everything)
-./scripts/setup.sh
-
-# 1. Create environment file
-cp .env.example .env
-
-# 2. Start the database and Ollama
-docker compose up -d postgres ollama
-
-# 3. Wait for services to be ready
-sleep 10
-
-# 4. Pull the embedding model
-docker exec ollama_server ollama pull nomic-embed-text
-
-# 5. Pull a lightweight chat model
-docker exec ollama_server ollama pull llama3.2:1b
-
-# 6. Start the full system
-docker compose up -d
-
-# 7. Check if everything is running
-docker compose ps
-
-
-# Create virtual environment
-python3.11 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# Start PostgreSQL and Ollama in Docker
-docker compose up -d postgres ollama
-
-# Update .env for localhost
-echo 'DATABASE_URL=postgresql://agent_user:agent_password@localhost:5432/agent_memory' > .env
-echo 'OLLAMA_URL=http://localhost:11434' >> .env
-echo 'EMBEDDING_MODEL=nomic-embed-text' >> .env
-echo 'LLM_MODEL=llama3.2:1b' >> .env
-
-# Run the API
-uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
-
-
-Project Structure
-
+```text
 ai-agent-vector-system/
-├── docker-compose.yml          # Service orchestration
-├── Dockerfile                   # API container
-├── requirements.txt             # Python dependencies
-├── .env.example                 # Environment variables template
 │
-├── src/                         # Application source code
-│   ├── main.py                  # FastAPI entry point
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+├── README.md
+├── .env.example
+│
+├── src/
+│   ├── main.py
+│   │
 │   ├── api/
-│   │   └── routes.py            # API endpoints
+│   │   └── routes.py
+│   │
 │   ├── core/
-│   │   ├── vector_store.py      # PostgreSQL + pgvector operations
-│   │   └── embedder.py          # Embedding generation
+│   │   ├── vector_store.py
+│   │   └── embedder.py
+│   │
 │   ├── services/
-│   │   ├── document_processor.py # Document ingestion
-│   │   └── agent_service.py      # RAG and agent logic
+│   │   ├── document_processor.py
+│   │   └── agent_service.py
+│   │
 │   ├── models/
-│   │   └── schemas.py            # Pydantic models
+│   │   └── schemas.py
+│   │
 │   └── utils/
-│       └── logger.py             # Logging configuration
+│       └── logger.py
 │
 ├── config/
-│   ├── settings.py               # Configuration management
-│   └── prometheus.yml            # Monitoring config
+│   ├── settings.py
+│   └── prometheus.yml
 │
 ├── scripts/
-│   ├── init_db.sql               # Database initialization
-│   └── setup.sh                  # One-command setup
+│   ├── setup.sh
+│   └── init_db.sql
 │
-├── data/                        # Persistent data storage
-│   ├── postgres/                 # PostgreSQL data
-│   ├── ollama/                   # LLM models
-│   ├── prometheus/               # Metrics data
-│   └── grafana/                  # Dashboard data
+├── data/
+│   ├── postgres/
+│   ├── ollama/
+│   ├── prometheus/
+│   └── grafana/
 │
 └── tests/
-    └── test_vector_store.py      # Unit tests
-
-
-💡 Example Use Cases
-
-1. Customer Support Agent
-
-Upload support tickets and knowledge base articles. The agent can answer customer questions with context from previous tickets.
-
-2. Code Documentation Assistant
-
-Index your codebase documentation. Developers can ask questions about APIs, functions, and architecture.
-
-3. Personal Knowledge Base
-
-Store your notes, book highlights, and research papers. Query across your entire knowledge repository.
-
-4. Internal Wiki Search
-
-Ingest your company wiki. Employees can find relevant information instantly.
-
-🙏 Acknowledgments
-
-pgvector - Vector extension for PostgreSQL
-Ollama - Local LLM runtime
-FastAPI - Web framework
-SQLAlchemy - ORM
-
-Built with ❤️ by Herr Sah
-Version: 1.0.0
-Status: ✅ Production Ready
-
+    └── test_vector_store.py
+```
 
 ---
 
-## 📝 How to Use
+# 🚀 Quick Start
 
-1. Copy the entire content above
-2. Create a new file in your project root called `README.md`
-3. Paste the content
-4. Save the file
-5. Optionally, update the GitHub repository URL in the clone commands
+## Prerequisites
+
+- Docker
+- Docker Compose
+- Python 3.11+
+- Git
+- 8 GB RAM minimum
+- 10 GB free storage
 
 ---
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/ai-agent-vector-system.git
+
+cd ai-agent-vector-system
+```
+
+---
+
+## Start Infrastructure
+
+```bash
+docker compose up -d postgres ollama
+```
+
+---
+
+## Download Models
+
+```bash
+docker exec ollama_server ollama pull nomic-embed-text
+
+docker exec ollama_server ollama pull llama3.2:1b
+```
+
+---
+
+## Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Example:
+
+```env
+DATABASE_URL=postgresql://agent_user:agent_password@localhost:5432/agent_memory
+
+OLLAMA_URL=http://localhost:11434
+
+EMBEDDING_MODEL=nomic-embed-text
+
+LLM_MODEL=llama3.2:1b
+```
+
+---
+
+## Install Python Dependencies
+
+```bash
+python3.11 -m venv venv
+
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+---
+
+## Run API
+
+```bash
+uvicorn src.main:app --reload
+```
+
+Open
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+# 🔄 RAG Workflow
+
+```mermaid
+sequenceDiagram
+
+participant User
+
+participant API
+
+participant Agent
+
+participant Embedder
+
+participant VectorDB
+
+participant LLM
+
+User->>API: Upload Document
+
+API->>Embedder: Generate Embeddings
+
+Embedder->>VectorDB: Store Vectors
+
+User->>API: Ask Question
+
+API->>Embedder: Embed Query
+
+Embedder->>VectorDB: Similarity Search
+
+VectorDB-->>Agent: Relevant Context
+
+Agent->>LLM: Context + Prompt
+
+LLM-->>Agent: Response
+
+Agent-->>User: Final Answer
+```
+
+---
+
+# 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | /upload | Upload documents |
+| POST | /query | Ask questions |
+| GET | /documents | List indexed documents |
+| DELETE | /documents/{id} | Delete document |
+| GET | /health | Health check |
+| GET | /metrics | Prometheus metrics |
+
+---
+
+# 📊 Monitoring
+
+The project includes built-in observability.
+
+| Service | URL |
+|----------|-----|
+| FastAPI Docs | http://localhost:8000/docs |
+| Prometheus | http://localhost:9090 |
+| Grafana | http://localhost:3000 |
+
+---
+
+# 💡 Example Use Cases
+
+### Customer Support Assistant
+
+Answer customer questions using previous tickets and documentation.
+
+---
+
+### Code Documentation Assistant
+
+Search APIs, functions, architecture, and developer documentation.
+
+---
+
+### Personal Knowledge Base
+
+Store notes, books, PDFs, and research for semantic search.
+
+---
+
+### Enterprise Wiki Search
+
+Search internal documentation instantly using natural language.
+
+---
+
+# 🔮 Future Improvements
+
+- Multi-user authentication
+- Streaming responses
+- Hybrid Search (BM25 + Vector)
+- LangGraph Agents
+- Multi-modal document support
+- Redis Cache
+- Kubernetes Deployment
+- GPU Inference Support
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+# 🙏 Acknowledgements
+
+- PostgreSQL
+- pgvector
+- Ollama
+- FastAPI
+- SQLAlchemy
+- Prometheus
+- Grafana
+
+---
+
+## ⭐ If you found this project useful, consider giving it a star!
