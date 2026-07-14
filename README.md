@@ -29,30 +29,27 @@ This system enables your AI agent to:
 
 ---
 
-## 🏗️ Architecture
-
-```mermaid
-flowchart TB
-    User[User] --> API[FastAPI Gateway]
+flowchart LR
+    User[👤 User] --> API[⚡ FastAPI]
     
-    subgraph System["AI Agent System"]
-        API --> Agent[AI Agent Service]
-        Agent --> Vector[PostgreSQL + pgvector]
-        Agent --> Ollama[Ollama Local LLM]
-        
-        Ollama --> Embed[nomic-embed-text]
-        Ollama --> Chat[llama3.2:1b]
-        
-        Monitor[Prometheus + Grafana] -.-> API
-        Monitor -.-> Agent
-        Monitor -.-> Vector
-        Monitor -.-> Ollama
+    subgraph Core["🧠 AI Agent System"]
+        API --> Agent[🤖 AI Agent Core]
+        Agent --> DB[(🗄️ PostgreSQL<br/>+ pgvector)]
+        Agent --> Ollama[🦙 Ollama]
     end
     
-    Vector --> Storage[(Persistent Storage)]
-    Ollama --> Models[Local Models Cache]
-
----
+    subgraph Models["🎯 LLM Models"]
+        Ollama --> Embed[📊 nomic-embed-text]
+        Ollama --> Chat[💬 llama3.2:1b]
+    end
+    
+    subgraph Monitor["📈 Observability"]
+        Prom[Prometheus] --> Graf[Grafana]
+        API -.-> Prom
+        Agent -.-> Prom
+        DB -.-> Prom
+        Ollama -.-> Prom
+    end
 
 ## 🛠️ Tech Stack
 
