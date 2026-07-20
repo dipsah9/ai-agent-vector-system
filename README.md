@@ -165,7 +165,7 @@ ai-agent-vector-system/
 ## Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/ai-agent-vector-system.git
+git clone https://github.com/dipsah9/ai-agent-vector-system.git
 
 cd ai-agent-vector-system
 ```
