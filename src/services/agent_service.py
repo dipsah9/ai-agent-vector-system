@@ -51,7 +51,7 @@ class AgentService:
         filter_metadata: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         """Retrieve relevant chunks from the vector store."""
-        query_embedding = self.embedder.embed_single(query)
+        query_embedding = self.embedder.embed_query(query)
         return self.vector_store.search(
             query_embedding=query_embedding,
             top_k=top_k,

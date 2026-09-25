@@ -17,8 +17,9 @@ class DocumentProcessor:
         self.chunk_size = 500
         self.chunk_overlap = 50
     
+
     async def process_document(self, text: str, document_id: str, 
-                               metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                            metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Process a document and store it in the vector database"""
         
         logger.info(f"Processing document: {document_id}")
@@ -30,7 +31,7 @@ class DocumentProcessor:
         chunks = self._chunk_text(text)
         
         # Generate embeddings
-        embeddings = self.embedder.embed(chunks)
+        embeddings = self.embedder.embed_batch(chunks)  # <-- FIXED
         
         # Prepare metadata for each chunk
         chunk_metadata = []
