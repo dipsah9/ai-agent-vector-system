@@ -56,7 +56,7 @@ class AgentService:
             query_embedding=query_embedding,
             top_k=top_k,
             filter_metadata=filter_metadata,
-            similarity_threshold=0.6,
+            similarity_threshold=0.5,
         )
 
     async def answer_question(
