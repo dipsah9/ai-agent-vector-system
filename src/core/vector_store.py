@@ -4,22 +4,29 @@ from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, f
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from pgvector.sqlalchemy import Vector
+from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime
 import json
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
+
 class DocumentEmbedding(Base):
     __tablename__ = 'document_embeddings'
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     document_id = Column(String(255), nullable=False, index=True)
     chunk_text = Column(Text, nullable=False)
     embedding = Column(Vector(768))
-    meta_data = Column(Text)
+    # Python attribute is `meta_data`, but the DB column is named `metadata`.
+    # `metadata` is reserved by SQLAlchemy's Declarative API, so we cannot
+    # name the Python attribute `metadata`. The two-argument form of Column
+    # maps the Python name to the actual DB column name.
+    meta_data = Column("metadata", JSONB)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
+
 
 class VectorStore:
     def __init__(self, database_url: str):
@@ -33,30 +40,35 @@ class VectorStore:
         self.Session = sessionmaker(bind=self.engine)
         self._create_tables()
         self._create_indexes()
-    
+
     def _create_tables(self):
         Base.metadata.create_all(self.engine)
         logger.info("Vector database tables created")
-    
+
     def _create_indexes(self):
         with self.engine.connect() as conn:
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw 
-                ON document_embeddings 
+                CREATE INDEX IF NOT EXISTS idx_embedding_hnsw
+                ON document_embeddings
                 USING hnsw (embedding vector_cosine_ops)
             """))
             conn.execute(text("""
-                CREATE INDEX IF NOT EXISTS idx_document_id 
+                CREATE INDEX IF NOT EXISTS idx_document_id
                 ON document_embeddings (document_id)
             """))
             conn.commit()
         logger.info("Vector database indexes created")
-    
-    def insert(self, document_id: str, chunks: List[str], 
-               embeddings: List[List[float]], metadata: List[Dict[str, Any]] = None):
+
+    def insert(
+        self,
+        document_id: str,
+        chunks: List[str],
+        embeddings: List[List[float]],
+        metadata: List[Dict[str, Any]] = None
+    ):
         if metadata is None:
             metadata = [{}] * len(chunks)
-        
+
         session = self.Session()
         try:
             for chunk, embedding, meta in zip(chunks, embeddings, metadata):
@@ -64,10 +76,10 @@ class VectorStore:
                     document_id=document_id,
                     chunk_text=chunk,
                     embedding=embedding,
-                    meta_data=json.dumps(meta)
+                    meta_data=meta  # Python attribute name stays meta_data
                 )
                 session.add(doc)
-            
+
             session.commit()
             logger.info(f"Inserted {len(chunks)} embeddings for document {document_id}")
         except Exception as e:
@@ -76,30 +88,34 @@ class VectorStore:
             raise
         finally:
             session.close()
-        
-    def search(self, query_embedding: List[float], 
-            top_k: int = 5, 
-            filter_metadata: Optional[Dict[str, Any]] = None,
-            similarity_threshold: float = 0.7) -> List[Dict[str, Any]]:
-        
-        # Build query - explicitly cast the parameter to vector
+
+    def search(
+        self,
+        query_embedding: List[float],
+        top_k: int = 5,
+        filter_metadata: Optional[Dict[str, Any]] = None,
+        similarity_threshold: float = 0.7
+    ) -> List[Dict[str, Any]]:
+
+        # Note: raw SQL uses the *DB* column name (`metadata`), while the
+        # ORM attribute is `meta_data`. This query bypasses the ORM so we
+        # must use the DB column name.
         sql = """
-            SELECT 
+            SELECT
                 chunk_text,
                 1 - (embedding <=> CAST(:emb AS vector)) as similarity,
-                meta_data
+                metadata
             FROM document_embeddings
         """
-        
-        # Parameters as dictionary - pgvector handles the list
+
         params = {'emb': query_embedding}
-        
+
         if filter_metadata:
-            sql += " WHERE meta_data::jsonb @> :filter"
+            sql += " WHERE metadata @> :filter"
             params['filter'] = json.dumps(filter_metadata)
-        
+
         sql += f" ORDER BY embedding <=> CAST(:emb AS vector) LIMIT {top_k}"
-        
+
         session = self.Session()
         try:
             result = session.execute(text(sql), params)
@@ -109,9 +125,9 @@ class VectorStore:
                     results.append({
                         'text': row.chunk_text,
                         'similarity': float(row.similarity),
-                        'metadata': json.loads(row.meta_data) if row.meta_data else {}
+                        'metadata': row.metadata if row.metadata else {}
                     })
-            
+
             logger.info(f"Found {len(results)} relevant chunks")
             return results
         except Exception as e:
@@ -119,7 +135,7 @@ class VectorStore:
             raise
         finally:
             session.close()
-    
+
     def delete_document(self, document_id: str):
         session = self.Session()
         try:
@@ -134,18 +150,18 @@ class VectorStore:
             raise
         finally:
             session.close()
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         session = self.Session()
         try:
             total_docs = session.query(func.count(
                 func.distinct(DocumentEmbedding.document_id)
             )).scalar()
-            
+
             total_chunks = session.query(func.count(
                 DocumentEmbedding.id
             )).scalar()
-            
+
             return {
                 'total_documents': total_docs or 0,
                 'total_chunks': total_chunks or 0,

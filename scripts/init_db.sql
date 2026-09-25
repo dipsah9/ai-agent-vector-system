@@ -7,21 +7,25 @@ CREATE TABLE IF NOT EXISTS document_embeddings (
     document_id VARCHAR(255) NOT NULL,
     chunk_text TEXT NOT NULL,
     embedding vector(768),
-    metadata TEXT,
+    metadata JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create HNSW index for similarity search
+-- HNSW index for fast similarity search
 CREATE INDEX IF NOT EXISTS idx_embedding_hnsw 
 ON document_embeddings 
 USING hnsw (embedding vector_cosine_ops);
 
--- Create normal index for document lookups
+-- Index for document lookups
 CREATE INDEX IF NOT EXISTS idx_document_id 
 ON document_embeddings (document_id);
 
--- Create function to update updated_at
+-- GIN index for filtering by metadata (e.g., by collection)
+CREATE INDEX IF NOT EXISTS idx_document_embeddings_meta 
+ON document_embeddings USING gin (metadata);
+
+-- Auto-update trigger
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -30,7 +34,10 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create trigger for updated_at
+-- Drop first so this is idempotent (safe to re-run)
+DROP TRIGGER IF EXISTS update_document_embeddings_updated_at 
+    ON document_embeddings;
+
 CREATE TRIGGER update_document_embeddings_updated_at
     BEFORE UPDATE ON document_embeddings
     FOR EACH ROW

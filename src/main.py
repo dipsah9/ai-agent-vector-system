@@ -58,8 +58,8 @@ async def startup_event():
         agent_service = AgentService(
             vector_store=vector_store,
             embedder=embedder,
-            llm_url=settings.ollama_url,
-            llm_model=settings.llm_model
+            groq_api_key=settings.groq_api_key,
+            groq_model=settings.groq_model,
         )
         
         # Inject services into routes
