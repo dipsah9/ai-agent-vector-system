@@ -10,6 +10,8 @@ from .services.agent_service import AgentService
 from .utils.logger import setup_logging
 from config.settings import settings
 
+from .api.auth import JWTMiddleware
+
 # Setup logging
 setup_logging(settings.log_level)
 logger = logging.getLogger(__name__)
@@ -25,6 +27,8 @@ app = FastAPI(
     title=settings.app_name,
     version="1.0.0"
 )
+
+app.add_middleware(JWTMiddleware)
 
 # ✅ Configure CORS properly
 app.add_middleware(
