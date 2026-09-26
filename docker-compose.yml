@@ -22,65 +22,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 1G
         reservations:
-          memory: 2G
+          memory: 512M
 
-  # Local LLM for Embeddings & Chat
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama_server
-    ports:
-      - "11434:11434"
-    volumes:
-      - ./data/ollama:/root/.ollama
-    environment:
-      - OLLAMA_KEEP_ALIVE=24h
-      - OLLAMA_NUM_PARALLEL=4
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-        reservations:
-          memory: 4G
-    networks:
-      - agent_network
-
-  # # Our AI Agent Backend
-  # agent_api:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: agent_api
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - DATABASE_URL=postgresql://agent_user:agent_password@postgres:5432/agent_memory
-  #     - OLLAMA_URL=http://ollama:11434
-  #     - LOG_LEVEL=INFO
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     ollama:
-  #       condition: service_started
-  #   volumes:
-  #     - ./data:/app/data
-  #     - ./logs:/app/logs
-  #     - ./config:/app/config
-  #   networks:
-  #     - agent_network
-  #   command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
-
-  # Frontend Web UI
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: agent_frontend
-    ports:
-      - "8080:80"
-    networks:
-      - agent_network
 
   # Monitoring
   prometheus:

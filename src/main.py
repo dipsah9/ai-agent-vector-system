@@ -51,7 +51,11 @@ async def startup_event():
     try:
         # Initialize core services
         vector_store = VectorStore(settings.database_url)
-        embedder = EmbeddingService(settings.ollama_url, settings.embedding_model)
+        embedder = EmbeddingService(
+                                api_key=settings.jina_api_key,
+                                model=settings.embedding_model,
+                                dimensions=settings.embedding_dimensions,
+)
         
         # Initialize business services
         document_processor = DocumentProcessor(vector_store, embedder)

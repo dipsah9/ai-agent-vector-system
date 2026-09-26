@@ -7,6 +7,12 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql://agent_user:agent_password@postgres:5432/agent_memory"
 
+    # Embeddings (Jina AI cloud API)
+    jina_api_key: str = ""
+    embedding_model: str = "jina-embeddings-v3"
+    embedding_dimensions: int = 768  # match existing vector(768) schema
+
+
     # Embeddings (local Ollama)
     ollama_url: str = "http://ollama:11434"
     embedding_model: str = "nomic-embed-text"
