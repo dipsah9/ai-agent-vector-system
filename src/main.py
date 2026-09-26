@@ -28,23 +28,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# JWT first (so CORS runs as the outermost layer)
 app.add_middleware(JWTMiddleware)
 
-# ✅ Configure CORS properly
+# CORS last (so it runs FIRST and handles preflight)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:8080",      # Frontend served locally
-        "http://127.0.0.1:8080",
-        "http://localhost:5173",      # Vite dev server
-        "http://localhost:3000",      # Alternative
-        "*"                           # Allow all during development
+        "http://localhost:3000",
+        "https://evofarm.vercel.app",
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
-
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
