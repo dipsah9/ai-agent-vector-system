@@ -1,4 +1,4 @@
-# 🚀 EvoFarm Documentation Assistant
+#  EvoFarm Documentation Assistant
 
 > A Retrieval-Augmented Generation (RAG) service that answers questions about EvoFarm's documentation using **local embeddings with Ollama** and **a fast cloud LLM with Groq**.
 
